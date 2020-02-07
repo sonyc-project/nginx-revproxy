@@ -18,12 +18,22 @@ containers are.
 variables:
     - VIRTUAL_HOST=subdomain.domain.com
     - LETSENCRYPT_HOST=subdomain.domain.com
-    - LETSENCRYPT_EMAIL=admin@admin.com
-    - (optional, if your container service is listening on port other than 80 or 443) VIRTUAL_PORT: 1234
+    - LETSENCRYPT_EMAIL=admin@admin.com (defaults to .env DEFAULT_EMAIL or sonyc.project@gmail.com)
+    - VIRTUAL_PORT: 1234 (optional, only needed if your container service is listening on port other than 80 or 443)
 
-- Copy the `env.sample` to `.env` and edit it according to the requirements
+- To override certain compose values, copy the `env.sample` to `.env` and edit it according to the requirements
 
-- Finally, run `./start.sh`
+- Create the network `docker network create webproxy`
+- Finally, run `docker-compose up -d`
+
+### Updates
+
+To update without downtime, do:
+
+```bash
+git pull # or whatever updates
+docker-compose up -d --no-deps --build
+```
 
 
 ### Security Considerations
