@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services:
   nginx:
@@ -28,12 +28,9 @@ services:
     depends_on:
       nginx:
         condition: service_healthy
+    volumes_from:
+      - nginx
     volumes:
-      - ./conf.d:/etc/nginx/conf.d
-      - ${NGINX_FILES_PATH:-./data}/vhost.d:/etc/nginx/vhost.d
-      - ${NGINX_FILES_PATH:-./data}/html:/usr/share/nginx/html
-      - ${NGINX_FILES_PATH:-./data}/certs:/etc/nginx/certs:ro
-      - ${NGINX_FILES_PATH:-./data}/htpasswd:/etc/nginx/htpasswd:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro
     entrypoint: /usr/bin/docker-gen
@@ -46,12 +43,9 @@ services:
   nginx-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: nginx-proxy-letsencrypt
+    volumes_from:
+      - nginx
     volumes:
-      - ./conf.d:/etc/nginx/conf.d
-      - ${NGINX_FILES_PATH:-./data}/vhost.d:/etc/nginx/vhost.d
-      - ${NGINX_FILES_PATH:-./data}/html:/usr/share/nginx/html
-      - ${NGINX_FILES_PATH:-./data}/certs:/etc/nginx/certs:ro
-      - ${NGINX_FILES_PATH:-./data}/htpasswd:/etc/nginx/htpasswd:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       DEFAULT_EMAIL: ${DEFAULT_EMAIL:-sonyc.project@gmail.com}
