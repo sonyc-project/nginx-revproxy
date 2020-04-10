@@ -6,7 +6,7 @@ services:
     container_name: nginx
     build: .
     env_file:
-      - ./defaults.env
+      - ./env.default
     ports:
       - "${IP}:${DOCKER_HTTP}:80"
       - "${IP}:${DOCKER_HTTPS}:443"
@@ -31,7 +31,7 @@ services:
       nginx:
         condition: service_healthy
     env_file:
-      - ./defaults.env
+      - ./env.default
     volumes_from:
       - nginx
     volumes:
@@ -48,7 +48,7 @@ services:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: nginx-proxy-letsencrypt
     env_file:
-      - ./defaults.env
+      - ./env.default
     volumes_from:
       - nginx
     volumes:
