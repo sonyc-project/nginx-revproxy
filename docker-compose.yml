@@ -5,15 +5,17 @@ services:
     image: nginx:revproxy-tmpl
     container_name: nginx
     build: .
+    env_file:
+      - ./defaults.env
     ports:
-      - "${IP:-0.0.0.0}:${DOCKER_HTTP:-80}:80"
-      - "${IP:-0.0.0.0}:${DOCKER_HTTPS:-443}:443"
+      - "${IP}:${DOCKER_HTTP}:80"
+      - "${IP}:${DOCKER_HTTPS}:443"
     volumes:
       - ./conf.d:/etc/nginx/conf.d
-      - ${NGINX_FILES_PATH:-./data}/vhost.d:/etc/nginx/vhost.d
-      - ${NGINX_FILES_PATH:-./data}/html:/usr/share/nginx/html
-      - ${NGINX_FILES_PATH:-./data}/certs:/etc/nginx/certs:ro
-      - ${NGINX_FILES_PATH:-./data}/htpasswd:/etc/nginx/htpasswd:ro
+      - ${NGINX_FILES_PATH}/vhost.d:/etc/nginx/vhost.d
+      - ${NGINX_FILES_PATH}/html:/usr/share/nginx/html
+      - ${NGINX_FILES_PATH}/certs:/etc/nginx/certs:ro
+      - ${NGINX_FILES_PATH}/htpasswd:/etc/nginx/htpasswd:ro
     privileged: true
     restart: always
     healthcheck:
@@ -28,6 +30,8 @@ services:
     depends_on:
       nginx:
         condition: service_healthy
+    env_file:
+      - ./defaults.env
     volumes_from:
       - nginx
     volumes:
@@ -43,12 +47,14 @@ services:
   nginx-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: nginx-proxy-letsencrypt
+    env_file:
+      - ./defaults.env
     volumes_from:
       - nginx
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      DEFAULT_EMAIL: ${DEFAULT_EMAIL:-sonyc.project@gmail.com}
+      DEFAULT_EMAIL: ${DEFAULT_EMAIL}
     privileged: true
     restart: always
 
